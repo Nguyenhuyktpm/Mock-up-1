@@ -8,12 +8,14 @@ import org.example.service.CustomerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CustomerServiceTest {
 
@@ -35,12 +37,57 @@ public class CustomerServiceTest {
     }
 
     @Test
-    public void testReadCustomerFromFile(){
+    public void testReadCustomerFromFile() {
+
+        doAnswer(invocation -> {
+            List<Customer> customers = invocation.getArgument(0);
+            customers.forEach(mockCustomerRepository::addElement);
+            return null;
+        }).when(mockCustomerFileHandling).addToRepository(anyList());
+
         List<Customer> mockCustomers = new ArrayList<>();
-        mockCustomers.add(new Customer("CUS0001","Nguyễn Đức Hoàng","9gmufwa3@gmail.com","03836429663"));
+        mockCustomers.add(new Customer("CUS0001", "Nguyễn Đức Hoàng", "9gmufwa3@gmail.com", "03836429663"));
 
         when(mockCustomerFileHandling.readFile(anyString())).thenReturn(mockCustomers);
 
+        List<Customer> customers = customerService.readCustomerFromFile("Data");
 
+        assertEquals(mockCustomers, customers);
+        verify(mockCustomerFileHandling, times(1)).addToRepository(anyList());
+    }
+
+    @Test
+    public void testEditCustomerFromFile() {
+
+        List<Customer> mockCustomers = new ArrayList<>();
+        mockCustomers.add(new Customer("CUS0001", "Nguyễn Đức Hoàng", "9gmufwa3@gmail.com", "03836429663"));
+
+        when(mockCustomerFileHandling.readFile(anyString())).thenReturn(mockCustomers);
+
+        customerService.editCustomerFromFile("Data");
+
+        verify(mockCustomerRepository, times(1)).editCustomer(any(Customer.class));
+    }
+
+    @Test
+    public void testAddCustomerFromFile() {
+        List<Customer> mockCustomers = new ArrayList<>();
+        mockCustomers.add(new Customer("CUS0001", "Nguyễn Đức Hoàng", "9gmufwa3@gmail.com", "03836429663"));
+
+        when(mockCustomerFileHandling.readFile(anyString())).thenReturn(mockCustomers);
+
+        customerService.addCustomerFromFile("Data");
+        verify(mockCustomerRepository, times(1)).addCustomer(any(Customer.class));
+    }
+
+    @Test
+    public void testDeleteCustomerFromFile() throws FileNotFoundException {
+        List<String> phoneNumbers = new ArrayList<>();
+        phoneNumbers.add("CUS0001");
+        when(mockReadFileToCRUD.readFile(anyString())).thenReturn(phoneNumbers);
+
+        customerService.deleteCustomerFromFile("Data");
+
+        verify(mockCustomerRepository, times(1)).deleteCustomer(anyString());
     }
 }

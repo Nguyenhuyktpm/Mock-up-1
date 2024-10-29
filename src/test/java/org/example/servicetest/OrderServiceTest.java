@@ -81,14 +81,12 @@ public class OrderServiceTest {
         List<Order> orders = orderService.readOrderFromFile("Data");
 
 
-
-
         assertEquals(orders, mockOrders);
         verify(mockOrderRepository, times(1)).addElement(any(Order.class));
     }
 
     @Test
-    public void testAddOrderFromFile() throws FileNotFoundException {
+    public void testAddOrderFromFile() throws FileNotFoundException, InterruptedException {
         List<Order> mockOrders = new ArrayList<>();
         Map<String, Integer> productQuantities = new HashMap<>();
         productQuantities.put("P0001", 2);
@@ -103,7 +101,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testEditOrderFromFile(){
+    public void testEditOrderFromFile() throws InterruptedException {
         List<Order> mockOrders = new ArrayList<>();
         Map<String, Integer> productQuantities = new HashMap<>();
         productQuantities.put("P0001", 2);
@@ -118,20 +116,16 @@ public class OrderServiceTest {
 
     }
 
-    public void testDeleteOrderFromFile() throws FileNotFoundException {
-        List<Order> mockOrders = new ArrayList<>();
-        Map<String, Integer> productQuantities = new HashMap<>();
-        productQuantities.put("P0001", 2);
-        productQuantities.put("P0002", 1);
-        mockOrders.add(new Order("ORD0001", "CUS0001", productQuantities, "2024-05-13T10:17:08.055107+07:07"));
+    @Test
+    public void testDeleteOrderFromFile() throws FileNotFoundException, InterruptedException {
 
         List<String> ids = new ArrayList<>();
         ids.add("ORD0001");
-        when(mockOrderRepository.getList()).thenReturn(mockOrders);
+
         when(mockReadFileToCRUD.readFile(anyString())).thenReturn(ids);
 
         orderService.deleteOrderFromFile("Data");
 
-        verify(mockOrderRepository,times(1)).deleteOrder(anyString());
+        verify(mockOrderRepository, times(1)).deleteOrder(anyString());
     }
 }

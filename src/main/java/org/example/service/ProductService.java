@@ -22,10 +22,11 @@ import java.util.Map;
 public class ProductService {
     public ProductRepository productRepository = ProductRepository.getInstance();
     public OrderRepository orderRepository = OrderRepository.getInstance();
+    public ReadFileToCRUD readFileToCRUD = new ReadFileToCRUD();
+    public CommonController commonController = new CommonController();
     DataType dataType = DataType.PRODUCT;
     public SalesManager salesManager = SaleManagerFactory.getSalesManager(dataType);
-    public ReadFileToCRUD readFileToCRUD = new ReadFileToCRUD();
-public CommonController commonController = new CommonController();
+
     public List<Product> readProductFromFile(String folderPath) {
         String filePathInput = folderPath + FilePathEnum.ProductInputPath.getPath();
         String filePathOutput = folderPath + FilePathEnum.ProductOutputPath.getPath();
@@ -75,7 +76,7 @@ public CommonController commonController = new CommonController();
         salesManager.writeFile(productRepository.getList(), filePathOutput);
     }
 
-    public void findTop3HighestOrder(String folderPath) {
+    public void findTop3HighestOrder(String folderPath) throws InterruptedException {
 
         String filePathOutput = folderPath + FilePathEnum.ProductOutputPath.getPath();
         Map<String, Integer> productOrderCount = new HashMap<>();
@@ -96,7 +97,7 @@ public CommonController commonController = new CommonController();
                 .limit(3)
                 .toList();
 
-        System.out.println(products);
+
         salesManager.writeFile(products, filePathOutput);
     }
 }

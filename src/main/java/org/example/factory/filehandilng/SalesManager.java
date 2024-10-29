@@ -1,7 +1,5 @@
 package org.example.factory.filehandilng;
 
-import org.example.model.Product;
-
 import java.util.List;
 
 public interface SalesManager {

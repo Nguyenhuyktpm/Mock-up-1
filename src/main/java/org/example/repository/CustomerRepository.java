@@ -1,19 +1,18 @@
 package org.example.repository;
 
 import org.example.model.Customer;
-import org.example.model.Product;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Map;
 
 public class CustomerRepository {
     private static CustomerRepository instance = null;
-    private final List<Customer> list;
+    private final Map<String, Customer> list;
 
     private CustomerRepository() {
-        list = new ArrayList<>();
+        list = new HashMap<>();
     }
 
     public static CustomerRepository getInstance() {
@@ -24,43 +23,31 @@ public class CustomerRepository {
     }
 
     public void editCustomer(Customer element) {
-        list.stream().filter(customer -> Objects.equals(customer.getPhoneNumber(), element.getPhoneNumber()))
-                .findFirst()
-                .ifPresent(customer -> {
-                    customer.setName(element.getName());
-                    customer.setEmail(element.getEmail());
-                    customer.setId(element.getId());
-                });
+        Customer customer = list.get(element.getPhoneNumber());
+        if (customer != null) {
+            customer.setName(element.getName());
+            customer.setEmail(element.getEmail());
+            customer.setId(element.getId());
+        }
     }
 
     public void deleteCustomer(String phoneNumber) {
-        list.removeIf(customer -> customer.getPhoneNumber().equals(phoneNumber));
+        list.remove(phoneNumber);
     }
 
     public List<Customer> getList() {
-        return list;
+        return new ArrayList<>(list.values());
     }
 
     public void addCustomer(Customer element) {
-        Optional<Customer> existingCustomer = list.stream()
-                .filter(customer -> customer.getPhoneNumber().equals(element.getPhoneNumber()))
-                .findFirst();
-
-        if (existingCustomer.isPresent()) {
-            Customer customerToUpdate = existingCustomer.get();
-            customerToUpdate.setName(element.getName());
-            customerToUpdate.setEmail(element.getEmail());
-
-        } else {
-            list.add(element);
-        }
+        list.put(element.getPhoneNumber(), element);
     }
+
     public boolean isCustomerIdExisted(String id) {
-        return list.stream().anyMatch(element -> element.getId().equals(id));
+        return list.values().stream().anyMatch(element -> element.getId().equals(id));
     }
 
     public void addElement(Customer element) {
-        list.add(element);
+        list.put(element.getPhoneNumber(), element);
     }
-
 }

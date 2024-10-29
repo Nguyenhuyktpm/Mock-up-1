@@ -51,7 +51,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testReadProductFromFile_valid() {
+    public void testReadProductFromFile() {
 
         doAnswer(invocation -> {
             List<Product> products = invocation.getArgument(0);
@@ -75,7 +75,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testEditProductFromFile_valid() {
+    public void testEditProductFromFile() {
 
         List<Product> existingProducts = new ArrayList<>();
         existingProducts.add(new Product("1", "Product1", 10.0, 100));

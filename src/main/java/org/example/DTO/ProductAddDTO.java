@@ -1,6 +1,5 @@
 package org.example.DTO;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class ProductAddDTO {

@@ -23,28 +23,9 @@ public class OrderService {
     public ReadFileToCRUD readFileToCRUD = new ReadFileToCRUD();
     public ReadFileToAddOrder readFileToAddOrder = new ReadFileToAddOrder();
     public CommonController commonController = new CommonController();
+    public CommonController controller = new CommonController();
     DataType dataType = DataType.ORDER;
     public SalesManager salesManager = SaleManagerFactory.getSalesManager(dataType);
-    public CommonController controller = new CommonController();
-
-    public static void main(String[] args) throws FileNotFoundException {
-        OrderService orderService = new OrderService();
-//        ProductService productService = new ProductService();
-//        productService.readProductFromFile("Data");
-//        CustomerService customerService = new CustomerService();
-//        customerService.readCustomerFromFile("Data");
-//        orderService.readOrderFromFile("Data");
-//        orderService.addOrderFromFile("Data");
-//        orderService.findOrdersByProductId("");
-//        orderService.deleteOrderFromFile("Data");
-        orderService.findOrdersByProductId("Data");
-
-//        DataCommon.addOrderToRepo("Data");
-
-//        OrderRepository orderRepository = OrderRepository.getInstance();
-//       System.out.println( "Hello"+orderRepository.findByProductId("P0001"));
-//        orderService.findOrdersByProductId("Data");
-    }
 
     public List<Order> readOrderFromFile(String folderPath) {
         String filePathInput = folderPath + FilePathEnum.OrderInputPath.getPath();
@@ -59,7 +40,7 @@ public class OrderService {
         return orders;
     }
 
-    public void addOrderFromFile(String folderPath) throws FileNotFoundException {
+    public void addOrderFromFile(String folderPath) throws FileNotFoundException, InterruptedException {
         String filePathInput = folderPath + FilePathEnum.OrderAddPath.getPath();
         String filePathOutput = folderPath + FilePathEnum.OrderOutputPath.getPath();
 
@@ -75,22 +56,21 @@ public class OrderService {
         salesManager.writeFile(orderRepository.getList(), filePathOutput);
     }
 
-    public void editOrderFromFile(String folderPath) {
+    public void editOrderFromFile(String folderPath) throws InterruptedException {
         String filePathInput = folderPath + FilePathEnum.OrderUpdatePath.getPath();
         String filePathOutput = folderPath + FilePathEnum.OrderOutputPath.getPath();
 
         commonController.run(folderPath);
-
         List<Order> orders = (List<Order>) salesManager.readFile(filePathInput);
         orders.forEach(orderRepository::editOrder);
         salesManager.writeFile(orderRepository.getList(), filePathOutput);
     }
 
-    public void deleteOrderFromFile(String folderPath) throws FileNotFoundException {
+    public void deleteOrderFromFile(String folderPath) throws FileNotFoundException, InterruptedException {
         String filePathInput = folderPath + FilePathEnum.OrderDeletePath.getPath();
-        commonController.run(folderPath);
-
         String filePathOutput = folderPath + FilePathEnum.OrderOutputPath.getPath();
+
+        commonController.run(folderPath);
         try {
             List<String> orderIds = readFileToCRUD.readFile(filePathInput);
 
@@ -101,14 +81,14 @@ public class OrderService {
         salesManager.writeFile(orderRepository.getList(), filePathOutput);
     }
 
-    public void findOrdersByProductId(String folderPath) throws FileNotFoundException {
+    public void findOrdersByProductId(String folderPath) throws FileNotFoundException, InterruptedException {
 
         String filePathInput = folderPath + FilePathEnum.OrderSearchingInputPath.getPath();
         String filePathOutput = folderPath + FilePathEnum.OrderOutputPath.getPath();
-        commonController.run(folderPath);
 
+        commonController.run(folderPath);
         List<String> productIds = readFileToCRUD.readFile(filePathInput);
-        System.out.println(productIds);
+
         List<Order> orders = productIds.stream()
                 .map(orderRepository::findByProductId)
                 .filter(Objects::nonNull)

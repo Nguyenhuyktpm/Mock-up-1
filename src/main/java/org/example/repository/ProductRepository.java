@@ -1,16 +1,16 @@
 package org.example.repository;
 
 import org.example.model.Product;
-
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductRepository {
     private static ProductRepository instance = null;
-    private final List<Product> list;
+    private final Map<String, Product> productMap;
 
     private ProductRepository() {
-        list = new ArrayList<>();
+        productMap = new HashMap<>();
     }
 
     public static ProductRepository getInstance() {
@@ -21,46 +21,35 @@ public class ProductRepository {
     }
 
     public List<Product> getList() {
-        return list;
+        return List.copyOf(productMap.values());
     }
 
-    public void addElement(Product element) {
-
-        list.add(element);
+    public void addElement(Product product) {
+        productMap.put(product.getId(), product);
     }
 
     public Product getById(String id) {
-        return list.stream().filter(e -> e.getId().equals(id)).findFirst().orElse(null);
+        return productMap.get(id);
     }
 
-
-    public void editProduct(Product element) {
-        list.stream()
-                .filter(product -> product.getId().equals(element.getId()))
-                .findFirst()
-                .ifPresent(product -> {
-                    product.setName(element.getName());
-                    product.setPrice(element.getPrice());
-                    product.setStockAvailable(element.getStockAvailable());
-                });
-    }
-
-    public Product findById(String id) {
-        return list.stream()
-                .filter(product -> product.getId().equals(id))
-                .findFirst()
-                .orElse(null);  // Trả về null nếu không tìm thấy sản phẩm
-    }
-
-    public void removeElement(String id) {
-        Product product = this.getById(id);
-        if (product != null) {
-            list.remove(product);
+    public void editProduct(Product product) {
+        if (productMap.containsKey(product.getId())) {
+            Product existingProduct = productMap.get(product.getId());
+            existingProduct.setName(product.getName());
+            existingProduct.setPrice(product.getPrice());
+            existingProduct.setStockAvailable(product.getStockAvailable());
         }
     }
 
-    public boolean isProductIdExist(String id) {
-        return list.stream().anyMatch(product -> product.getId().equals(id));
+    public Product findById(String id) {
+        return productMap.get(id);
     }
 
+    public void removeElement(String id) {
+        productMap.remove(id);
+    }
+
+    public boolean isProductIdExist(String id) {
+        return productMap.containsKey(id);
+    }
 }

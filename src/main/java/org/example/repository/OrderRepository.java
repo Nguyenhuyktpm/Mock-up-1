@@ -3,17 +3,19 @@ package org.example.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.example.model.Order;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class OrderRepository {
     private static OrderRepository instance = null;
-    private final List<Order> list;
+    private final Map<String, Order> orders;
 
     private OrderRepository() {
-        list = new ArrayList<>();
+        orders = new HashMap<>();
     }
 
     public static OrderRepository getInstance() {
@@ -24,70 +26,69 @@ public class OrderRepository {
     }
 
     public List<Order> getList() {
-        return list;
+        return List.copyOf(orders.values());
     }
 
-    public void addElement(Order element) {
-        list.add(element);
+    public void addElement(Order order) {
+        orders.put(order.getId(), order);
     }
 
     public void updateTotalAmount(Double totalAmount) {
-
+        // Implement logic if needed
     }
 
     public boolean isCustomerIdExisted(String customerId) {
-        CustomerRepository customerRepository = CustomerRepository.getInstance();
-        return customerRepository.getList().stream().anyMatch(customer -> customer.getId().equals(customerId));
+        return CustomerRepository.getInstance().getList().stream()
+                .anyMatch(customer -> customer.getId().equals(customerId));
     }
 
     public boolean isProductIdExisted(String productId) {
-        ProductRepository productRepository = ProductRepository.getInstance();
-        return productRepository.getList().stream().anyMatch(product -> product.getId().equals(productId));
+        return ProductRepository.getInstance().getList().stream()
+                .anyMatch(product -> product.getId().equals(productId));
     }
 
-    public boolean isProductIdExisted(Set<String> productId) {
-        ProductRepository productRepository = ProductRepository.getInstance();
-        return productId.stream().allMatch(this::isProductIdExisted);
+    public boolean isProductIdExisted(Set<String> productIds) {
+        return productIds.stream().allMatch(this::isProductIdExisted);
     }
 
     public void addOrders(Order order) {
-
-        String lastId = list.get(list.size() - 1).getId();
+        String lastId = orders.isEmpty() ? "ORD0000000" : orders.keySet().stream()
+                .max(String::compareTo).orElse("ORD0000000");
 
         int numberInId = Integer.parseInt(lastId.substring(3));
+
         if (this.isProductIdExisted(order.getProductQuantities().keySet())
                 && this.isCustomerIdExisted(order.getCustomerId())) {
             String orderId = String.format("ORD%07d", numberInId + 1);
             order.setId(orderId);
             this.addElement(order);
-        } else
-            log.error("Validate productId and CustomerId failed!");
+        } else {
+            log.error("Validate productId and customerId failed!");
+        }
     }
 
-
     public void editOrder(Order updateOrder) {
-        list.stream().filter(order -> order.getId().equals(updateOrder.getId()))
-                .findFirst()
-                .ifPresent(order -> {
-                    if (updateOrder.getCustomerId() != null) {
-                        order.setCustomerId(updateOrder.getCustomerId());
-                    }
-                    order.setProductQuantities(updateOrder.getProductQuantities());
-                    if (updateOrder.getOrderDate() != null) {
-                        order.setOrderDate(updateOrder.getOrderDate());
-                    }
-                    order.setId(updateOrder.getId());
-                    order.calculateTotalAmount(ProductRepository.getInstance());
-                });
+        Order existingOrder = orders.get(updateOrder.getId());
+
+        if (existingOrder != null) {
+            if (updateOrder.getCustomerId() != null) {
+                existingOrder.setCustomerId(updateOrder.getCustomerId());
+            }
+            existingOrder.setProductQuantities(updateOrder.getProductQuantities());
+            if (updateOrder.getOrderDate() != null) {
+                existingOrder.setOrderDate(updateOrder.getOrderDate());
+            }
+            existingOrder.calculateTotalAmount(ProductRepository.getInstance());
+        }
     }
 
     public void deleteOrder(String orderId) {
-        list.removeIf(order -> order.getId().equals(orderId));
+        orders.remove(orderId);
     }
 
     public List<Order> findByProductId(String productId) {
-        return list.stream().filter(order -> order.getProductQuantities().containsKey(productId))
-                .toList();
+        return orders.values().stream()
+                .filter(order -> order.getProductQuantities().containsKey(productId))
+                .collect(Collectors.toList());
     }
-
 }
