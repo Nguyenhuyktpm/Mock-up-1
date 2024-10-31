@@ -1,10 +1,10 @@
 package org.example;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.common.CommonController;
 import org.example.service.CustomerService;
 import org.example.service.OrderService;
 import org.example.service.ProductService;
+import org.example.utils.CommonController;
 
 import java.io.FileNotFoundException;
 
@@ -13,6 +13,11 @@ import java.io.FileNotFoundException;
 @Slf4j
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+
+        System.setProperty("data.folder", args[1]);
+        System.out.println(System.setProperty("data.folder", args[1]));
+
+
         CommonController commonController = new CommonController();
 
         ProductService productService = new ProductService();

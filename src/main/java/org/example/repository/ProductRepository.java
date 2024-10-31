@@ -1,16 +1,15 @@
 package org.example.repository;
 
 import org.example.model.Product;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class ProductRepository {
     private static ProductRepository instance = null;
     private final Map<String, Product> productMap;
 
     private ProductRepository() {
-        productMap = new HashMap<>();
+        productMap = new LinkedHashMap<>();
     }
 
     public static ProductRepository getInstance() {

@@ -1,8 +1,8 @@
 package org.example.servicetest;
 
 
-import org.example.common.CommonController;
-import org.example.common.ReadFileToCRUD;
+import org.example.utils.CommonController;
+import org.example.utils.FileReadingUtils;
 
 import org.example.factory.filehandilng.imp.ProductFileHandling;
 import org.example.model.Product;
@@ -28,7 +28,7 @@ public class ProductServiceTest {
     private ProductRepository mockProductRepository;
     private OrderRepository mockOrderRepository;
     private ProductFileHandling mockProductFileHandling;
-    private ReadFileToCRUD mockReadFileToCRUD;
+    private FileReadingUtils mockReadFileToCRUD;
     private CommonController mockCommonController;
 
 
@@ -38,7 +38,7 @@ public class ProductServiceTest {
         mockProductRepository = mock(ProductRepository.class);
         mockOrderRepository = mock(OrderRepository.class);
         mockProductFileHandling = mock(ProductFileHandling.class);
-        mockReadFileToCRUD = mock(ReadFileToCRUD.class);
+        mockReadFileToCRUD = mock(FileReadingUtils.class);
         mockCommonController = mock(CommonController.class);
 
 
@@ -99,7 +99,7 @@ public class ProductServiceTest {
 
         List<String> ids = new ArrayList<>();
         ids.add("1");
-        when(mockReadFileToCRUD.readFile(anyString())).thenReturn(ids);
+        when(mockReadFileToCRUD.readOneColumn(anyString())).thenReturn(ids);
 
         productService.deleteProductFromFile("Data");
 

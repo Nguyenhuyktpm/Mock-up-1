@@ -1,9 +1,9 @@
 package org.example.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.common.CommonController;
-import org.example.common.ReadFileToAddOrder;
-import org.example.common.ReadFileToCRUD;
+import org.example.utils.CommonController;
+import org.example.utils.ReadFileToAddOrder;
+import org.example.utils.FileReadingUtils;
 import org.example.enums.DataType;
 import org.example.enums.FilePathEnum;
 import org.example.factory.filehandilng.SaleManagerFactory;
@@ -20,7 +20,7 @@ import java.util.Objects;
 public class OrderService {
     public OrderRepository orderRepository = OrderRepository.getInstance();
     public ProductRepository productRepository = ProductRepository.getInstance();
-    public ReadFileToCRUD readFileToCRUD = new ReadFileToCRUD();
+    public FileReadingUtils readFileToCRUD = new FileReadingUtils();
     public ReadFileToAddOrder readFileToAddOrder = new ReadFileToAddOrder();
     public CommonController commonController = new CommonController();
     public CommonController controller = new CommonController();
@@ -72,7 +72,7 @@ public class OrderService {
 
         commonController.run(folderPath);
         try {
-            List<String> orderIds = readFileToCRUD.readFile(filePathInput);
+            List<String> orderIds = readFileToCRUD.readOneColumn(filePathInput);
 
             orderIds.forEach(orderRepository::deleteOrder);
         } catch (Exception e) {
@@ -87,7 +87,7 @@ public class OrderService {
         String filePathOutput = folderPath + FilePathEnum.OrderOutputPath.getPath();
 
         commonController.run(folderPath);
-        List<String> productIds = readFileToCRUD.readFile(filePathInput);
+        List<String> productIds = readFileToCRUD.readOneColumn(filePathInput);
 
         List<Order> orders = productIds.stream()
                 .map(orderRepository::findByProductId)

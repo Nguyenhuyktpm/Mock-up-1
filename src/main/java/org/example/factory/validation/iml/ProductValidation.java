@@ -55,18 +55,7 @@ public class ProductValidation implements ValidationManager<ProductValidationDTO
         return true;
     }
 
-    @Override
-    public <T> boolean isElementInFile(T element, String filePath) throws IOException {
 
-        List<String> lines = Files.readAllLines(Paths.get(filePath));
-        Product product = (Product) element;
-
-        return lines.stream()
-                .anyMatch(line -> {
-                    String[] parts = line.split(",");
-                    return parts[ColumnEnum.Column1.getCode()].equals(product.getId());  // So sánh ID sản phẩm
-                });
-    }
 
     @Override
     public boolean validate(ProductValidationDTO product) {

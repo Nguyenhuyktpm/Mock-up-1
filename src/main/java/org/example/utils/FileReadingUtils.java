@@ -1,4 +1,4 @@
-package org.example.common;
+package org.example.utils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReadFileToCRUD {
-    public List<String> readFile(String filePath) throws FileNotFoundException {
+public class FileReadingUtils {
+    public List<String> readOneColumn(String filePath) throws FileNotFoundException {
         List<String> list = new ArrayList<>();
         try(BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line ;

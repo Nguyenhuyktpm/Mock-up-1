@@ -1,9 +1,9 @@
 package org.example.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.common.CommonController;
-import org.example.common.DataCommon;
-import org.example.common.ReadFileToCRUD;
+import org.example.utils.CommonController;
+import org.example.utils.DataCommon;
+import org.example.utils.FileReadingUtils;
 import org.example.enums.DataType;
 import org.example.enums.FilePathEnum;
 import org.example.factory.filehandilng.SaleManagerFactory;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class ProductService {
     public ProductRepository productRepository = ProductRepository.getInstance();
     public OrderRepository orderRepository = OrderRepository.getInstance();
-    public ReadFileToCRUD readFileToCRUD = new ReadFileToCRUD();
+    public FileReadingUtils readFileToCRUD = new FileReadingUtils();
     public CommonController commonController = new CommonController();
     DataType dataType = DataType.PRODUCT;
     public SalesManager salesManager = SaleManagerFactory.getSalesManager(dataType);
@@ -56,7 +56,7 @@ public class ProductService {
         DataCommon.addProductToRepo(folderPath);
 
         try {
-            List<String> productIds = readFileToCRUD.readFile(filePathInput);
+            List<String> productIds = readFileToCRUD.readOneColumn(filePathInput);
 
             productIds.forEach(productRepository::removeElement);
         } catch (FileNotFoundException e) {

@@ -1,4 +1,4 @@
-package org.example.common;
+package org.example.utils;
 
 import org.example.service.CustomerService;
 import org.example.service.OrderService;

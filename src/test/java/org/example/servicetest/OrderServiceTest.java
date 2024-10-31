@@ -1,8 +1,8 @@
 package org.example.servicetest;
 
-import org.example.common.CommonController;
-import org.example.common.ReadFileToAddOrder;
-import org.example.common.ReadFileToCRUD;
+import org.example.utils.CommonController;
+import org.example.utils.ReadFileToAddOrder;
+import org.example.utils.FileReadingUtils;
 import org.example.factory.filehandilng.imp.OrderFileHandling;
 import org.example.model.Order;
 import org.example.model.Product;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 public class OrderServiceTest {
     private OrderService orderService;
     private OrderFileHandling mockOrderFileHandling;
-    private ReadFileToCRUD mockReadFileToCRUD;
+    private FileReadingUtils mockReadFileToCRUD;
     private OrderRepository mockOrderRepository;
     private ProductRepository mockProductRepository;
     private CustomerRepository mockCustomerRepository;
@@ -37,7 +37,7 @@ public class OrderServiceTest {
     public void setUp() {
         orderService = new OrderService();
         mockOrderFileHandling = mock(OrderFileHandling.class);
-        mockReadFileToCRUD = mock(ReadFileToCRUD.class);
+        mockReadFileToCRUD = mock(FileReadingUtils.class);
         mockProductRepository = mock(ProductRepository.class);
         mockCustomerRepository = mock(CustomerRepository.class);
         mockOrderRepository = mock(OrderRepository.class);
@@ -122,7 +122,7 @@ public class OrderServiceTest {
         List<String> ids = new ArrayList<>();
         ids.add("ORD0001");
 
-        when(mockReadFileToCRUD.readFile(anyString())).thenReturn(ids);
+        when(mockReadFileToCRUD.readOneColumn(anyString())).thenReturn(ids);
 
         orderService.deleteOrderFromFile("Data");
 

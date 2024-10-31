@@ -3,10 +3,7 @@ package org.example.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.example.model.Order;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -15,7 +12,7 @@ public class OrderRepository {
     private final Map<String, Order> orders;
 
     private OrderRepository() {
-        orders = new HashMap<>();
+        orders = new LinkedHashMap<>();
     }
 
     public static OrderRepository getInstance() {

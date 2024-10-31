@@ -1,4 +1,4 @@
-package org.example.common;
+package org.example.utils;
 
 import org.example.enums.DataType;
 import org.example.enums.FilePathEnum;

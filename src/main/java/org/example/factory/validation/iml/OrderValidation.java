@@ -18,24 +18,7 @@ import java.util.Map;
 
 @Slf4j
 public class OrderValidation implements ValidationManager<OrderValidationDTO> {
-    @Override
-    public <T> boolean isElementInFile(T element, String filePath) throws IOException {
 
-        List<String> lines = Files.readAllLines(Paths.get(filePath));
-        Order order = (Order) element;
-
-        boolean result = lines.stream()
-                .anyMatch(line -> {
-                    String[] parts = line.split(",");
-                    return parts[ColumnEnum.Column1.getCode()].equals(order.getId());
-                });
-        if (result) {
-            log.error("Order id: {} is existed in output file!",order.getId());
-            return true;
-        }
-
-        return false;
-    }
 
     @Override
     public boolean validate(OrderValidationDTO orderValidationDTO) {

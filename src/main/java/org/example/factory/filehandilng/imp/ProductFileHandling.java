@@ -11,8 +11,11 @@ import org.example.factory.validation.ValidationManager;
 import org.example.model.Product;
 import org.example.repository.ProductRepository;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,40 +27,39 @@ public class ProductFileHandling implements SalesManager {
     @Override
     public List<Product> readFile(String filePath) {
         List<Product> products = new ArrayList<>();
-
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8))) {
-            String line;
-            boolean isFirstLine = true;
-            while ((line = br.readLine()) != null) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue;
-                }
-
+        try {
+            List<String> lines = Files.readAllLines(Path.of(filePath), StandardCharsets.UTF_8);
+            lines.stream().skip(1).forEach(line -> {
                 String[] values = line.split(",");
                 if (values.length >= 4) {
-                    String id = values[ColumnEnum.Column1.getCode()].trim();
-                    String name = values[ColumnEnum.Column2.getCode()].trim();
-                    Double price = Double.parseDouble(values[ColumnEnum.Column3.getCode()].trim());
-                    Integer stock = Integer.valueOf(values[ColumnEnum.Column4.getCode()].trim());
+                    try {
+                        String id = values[ColumnEnum.Column1.getCode()].trim();
+                        String name = values[ColumnEnum.Column2.getCode()].trim();
+                        double price = Double.parseDouble(values[ColumnEnum.Column3.getCode()].trim());
+                        int stock = Integer.parseInt(values[ColumnEnum.Column4.getCode()].trim());
 
-                    Product product = Product.builder()
-                            .id(id)
-                            .name(name)
-                            .price(price)
-                            .stockAvailable(stock)
-                            .build();
-                    if (validationManager.validate(ProductValidationDTO.builder()
-                            .product(product)
-                            .products(products)
-                            .build()))
-                        products.add(product);
-                } else
+                        Product product = Product.builder()
+                                .id(id)
+                                .name(name)
+                                .price(price)
+                                .stockAvailable(stock)
+                                .build();
+
+                        if (validationManager.validate(ProductValidationDTO.builder()
+                                .product(product)
+                                .products(products)
+                                .build())) {
+                            products.add(product);
+                        }
+                    } catch (NumberFormatException e) {
+                        log.error("Invalid data format in line: {}", line, e);
+                    }
+                } else {
                     log.error("Invalid data format in line: {}", line);
-            }
-
+                }
+            });
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("Error reading file: {}", filePath, e);
         }
         return products;
     }
@@ -79,25 +81,26 @@ public class ProductFileHandling implements SalesManager {
 
         if (elements != null && !elements.isEmpty() && elements.get(0) instanceof Product) {
             List<Product> products = (List<Product>) elements;
+            StringBuilder content = new StringBuilder(ColumnNameEnum.ProductNameEnum.getColumnName()).append("\n");
 
+            products.forEach(product -> {
+                content.append(product.getId()).append(",")
+                        .append(product.getName()).append(",")
+                        .append(product.getPrice()).append(",")
+                        .append(product.getStockAvailable()).append("\n");
+            });
 
-            try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), StandardCharsets.UTF_8))) {
-                bw.write(ColumnNameEnum.ProductNameEnum.getColumnName());
-                bw.newLine();
-                for (Product product : products) {
-                    if (!validationManager.isElementInFile(product, filePath)) {
-                        String line = product.getId() + ","
-                                + product.getName() + ","
-                                + product.getPrice() + ","
-                                + product.getStockAvailable();
-                        bw.write(line);
-                        bw.newLine();
-                    } else
-                        log.error("ProductId {} already exists", product.getId());
-                }
+            try {
+                Files.writeString(Path.of(filePath),
+                        content.toString(),
+                        StandardCharsets.UTF_8,
+                        StandardOpenOption.TRUNCATE_EXISTING,
+                        StandardOpenOption.CREATE);
             } catch (IOException e) {
                 log.error("Error writing Product file: {}", e.getMessage());
             }
         }
     }
 }
+
+

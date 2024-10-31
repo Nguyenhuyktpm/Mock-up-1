@@ -1,8 +1,8 @@
 package org.example.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.common.DataCommon;
-import org.example.common.ReadFileToCRUD;
+import org.example.utils.DataCommon;
+import org.example.utils.FileReadingUtils;
 import org.example.enums.DataType;
 import org.example.enums.FilePathEnum;
 import org.example.factory.filehandilng.SaleManagerFactory;
@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class CustomerService {
     public CustomerRepository customerRepository = CustomerRepository.getInstance();
-    public ReadFileToCRUD readFileToCRUD = new ReadFileToCRUD();
+    public FileReadingUtils readFileToCRUD = new FileReadingUtils();
     DataType dataType = DataType.CUSTOMER;
     public SalesManager salesManager = SaleManagerFactory.getSalesManager(dataType);
     public ValidationManager validationManager = ValidationFactory.getValidationManager(dataType);
@@ -61,7 +61,7 @@ public class CustomerService {
 
 
         try {
-            List<String> phoneNumber = readFileToCRUD.readFile(filePathInput);
+            List<String> phoneNumber = readFileToCRUD.readOneColumn(filePathInput);
             if (phoneNumber.isEmpty()) {
                 log.error("No phone numbers found to delete.");
                 return;

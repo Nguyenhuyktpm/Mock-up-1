@@ -79,22 +79,6 @@ public class CustomerValidation implements ValidationManager<CustomerValidateDTO
         return false;
     }
 
-    @Override
-    public <T2> boolean isElementInFile(T2 element, String filePath) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(filePath));
-        Customer customer = (Customer) element;
-
-        boolean result = lines.stream()
-                .anyMatch(line -> {
-                    String[] parts = line.split(",");
-                    return parts[ColumnEnum.Column1.getCode()].equals(customer.getId());
-                });
-        if (result) {
-            log.error("Customer with id {} exists in output file", customer.getId());
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public boolean validate(CustomerValidateDTO customerValidateDTO) {

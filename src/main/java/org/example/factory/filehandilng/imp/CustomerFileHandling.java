@@ -11,8 +11,11 @@ import org.example.factory.validation.ValidationManager;
 import org.example.model.Customer;
 import org.example.repository.CustomerRepository;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,47 +29,41 @@ public class CustomerFileHandling implements SalesManager {
         List<Customer> customers = new ArrayList<>();
 
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8))) {
-            String line;
-            boolean isFirstLine = true;
+        try {
+            List<String> lines = Files.readAllLines(Path.of(filePath), StandardCharsets.UTF_8);
+            lines.stream().skip(1).forEach(line -> {
+                if (!line.trim().isEmpty()) {
+                    String[] values = line.split(",");
+                    if (values.length >= 4) {
+                        try {
+                            String id = values[ColumnEnum.Column1.getCode()].trim();
+                            String name = values[ColumnEnum.Column2.getCode()].trim();
+                            String email = values[ColumnEnum.Column3.getCode()].trim();
+                            String phoneNumber = values[ColumnEnum.Column4.getCode()].trim();
 
-            while ((line = br.readLine()) != null) {
+                            Customer customer = Customer.builder()
+                                    .id(id)
+                                    .name(name)
+                                    .email(email)
+                                    .phoneNumber(phoneNumber)
+                                    .build();
 
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    continue;
-                }
-                if (line.trim().isEmpty()) {
-                    continue;
-                }
-
-                String[] values = line.split(",");
-                if (values.length >= 4) {
-                    String id = values[ColumnEnum.Column1.getCode()].trim();
-                    String name = values[ColumnEnum.Column2.getCode()].trim();
-                    String email = values[ColumnEnum.Column3.getCode()].trim();
-                    String phoneNumber = values[ColumnEnum.Column4.getCode()].trim();
-
-                    Customer customer = Customer.builder()
-                            .id(id)
-                            .name(name)
-                            .email(email)
-                            .phoneNumber(phoneNumber)
-                            .build();
-                    if (validationManager.validate(CustomerValidateDTO.builder()
-                            .customer(customer)
-                            .customers(customers)
-
-                            .build()))
-                        customers.add(customer);
-                    else
+                            if (validationManager.validate(CustomerValidateDTO.builder()
+                                    .customer(customer)
+                                    .customers(customers)
+                                    .build())) {
+                                customers.add(customer);
+                            }
+                        } catch (Exception e) {
+                            log.error("Invalid data format in line: {}", line, e);
+                        }
+                    } else {
                         log.error("Invalid data format, missing columns in line: {}", line);
+                    }
                 }
-
-            }
-
+            });
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("Error reading file: {}", filePath, e);
         }
         return customers;
     }
@@ -84,29 +81,28 @@ public class CustomerFileHandling implements SalesManager {
     @Override
     public <T> void writeFile(List<T> elements, String filePath) {
         if (elements != null && !elements.isEmpty() && elements.get(0) instanceof Customer) {
-
             List<Customer> customers = (List<Customer>) elements;
+            StringBuilder content = new StringBuilder(ColumnNameEnum.CustomerNameEnum.getColumnName()).append("\n");
+
+            customers.forEach(customer -> {
 
 
-            try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), StandardCharsets.UTF_8))) {
-
-                bw.write(ColumnNameEnum.CustomerNameEnum.getColumnName());
-                bw.newLine();
-
-                for (Customer customer : customers) {
-                    if (!validationManager.isElementInFile(customer, filePath)) {
-                        String line = customer.getId() + ","
-                                + customer.getName() + ","
-                                + customer.getEmail() + ","
-                                + customer.getPhoneNumber();
-                        bw.write(line);
-                        bw.newLine();
-                    }
-                }
+                content.append(customer.getId()).append(",")
+                        .append(customer.getName()).append(",")
+                        .append(customer.getEmail()).append(",")
+                        .append(customer.getPhoneNumber()).append("\n");
+            });
+            try {
+                Files.writeString(Path.of(filePath),
+                        content.toString(),
+                        StandardCharsets.UTF_8,
+                        StandardOpenOption.TRUNCATE_EXISTING,
+                        StandardOpenOption.CREATE);
             } catch (IOException e) {
                 log.error("Error writing Customer to file: {}", e.getMessage());
             }
-        } else
+        } else {
             log.error("Write Customer to file failed");
+        }
     }
 }

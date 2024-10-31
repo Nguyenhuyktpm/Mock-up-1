@@ -1,6 +1,6 @@
 package org.example.servicetest;
 
-import org.example.common.ReadFileToCRUD;
+import org.example.utils.FileReadingUtils;
 import org.example.factory.filehandilng.imp.CustomerFileHandling;
 import org.example.model.Customer;
 import org.example.repository.CustomerRepository;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class CustomerServiceTest {
 
     private CustomerService customerService;
-    private ReadFileToCRUD mockReadFileToCRUD;
+    private FileReadingUtils mockReadFileToCRUD;
     private CustomerRepository mockCustomerRepository;
     private CustomerFileHandling mockCustomerFileHandling;
 
@@ -28,7 +28,7 @@ public class CustomerServiceTest {
     public void setUp() {
         customerService = new CustomerService();
         mockCustomerFileHandling = mock(CustomerFileHandling.class);
-        mockReadFileToCRUD = mock(ReadFileToCRUD.class);
+        mockReadFileToCRUD = mock(FileReadingUtils.class);
         mockCustomerRepository = mock(CustomerRepository.class);
 
         customerService.customerRepository = mockCustomerRepository;
@@ -84,7 +84,7 @@ public class CustomerServiceTest {
     public void testDeleteCustomerFromFile() throws FileNotFoundException {
         List<String> phoneNumbers = new ArrayList<>();
         phoneNumbers.add("CUS0001");
-        when(mockReadFileToCRUD.readFile(anyString())).thenReturn(phoneNumbers);
+        when(mockReadFileToCRUD.readOneColumn(anyString())).thenReturn(phoneNumbers);
 
         customerService.deleteCustomerFromFile("Data");
 

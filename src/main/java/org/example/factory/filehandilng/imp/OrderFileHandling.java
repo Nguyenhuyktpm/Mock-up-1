@@ -13,12 +13,12 @@ import org.example.repository.CustomerRepository;
 import org.example.repository.OrderRepository;
 import org.example.repository.ProductRepository;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 
 @Slf4j
 public class OrderFileHandling implements SalesManager {
@@ -33,11 +33,11 @@ public class OrderFileHandling implements SalesManager {
         CustomerRepository customerRepository = CustomerRepository.getInstance();
 
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8))) {
-            String line;
+        try {
+            List<String> lines = Files.readAllLines(Path.of(filePath), StandardCharsets.UTF_8);
             boolean isFirstLine = true;
 
-            while ((line = br.readLine()) != null) {
+            for (String line : lines) {
                 if (isFirstLine) {
                     isFirstLine = false;
                     continue;
@@ -47,46 +47,53 @@ public class OrderFileHandling implements SalesManager {
                 }
 
                 String[] values = line.split(",");
-
                 if (values.length >= 4) {
                     Map<String, Integer> productQuantityMap = new HashMap<>();
-
                     String id = values[ColumnEnum.Column1.getCode()].trim();
                     String customerId = values[ColumnEnum.Column2.getCode()].trim();
-                    String[] pairs = String.valueOf(values[ColumnEnum.Column3.getCode()].trim()).split(";");
-                    for (String pair : pairs) {
-                        String[] keyValue = pair.split(":");
-                        if (keyValue.length == 2) {
-                            String productId = keyValue[0].trim();
-                            int quantity;
-                            try {
-                                quantity = Integer.parseInt(keyValue[1].trim());
-                            } catch (NumberFormatException e) {
-                                log.error("Invalid number format in quantity: {}", keyValue[1], e);
-                                continue;
-                            }
-                            productQuantityMap.put(productId, quantity);
-                        }
-                    }
-                    String date = String.valueOf(values[ColumnEnum.Column4.getCode()].trim());
+                    String[] pairs = values[ColumnEnum.Column3.getCode()].trim().split(";");
+
+                    boolean isProductIdExisted = Arrays.stream(pairs)
+                            .map(pair -> pair.split(":"))
+                            .filter(keyValue -> keyValue.length == 2)
+                            .anyMatch(keyValue -> {
+                                String productId = keyValue[0].trim();
+                                int quantity;
+                                try {
+                                    quantity = Integer.parseInt(keyValue[1].trim());
+                                } catch (NumberFormatException e) {
+                                    log.error("Invalid number format in quantity: {}", keyValue[1], e);
+                                    return false;
+                                }
+                                if (productQuantityMap.putIfAbsent(productId, quantity) != null) {
+                                    log.error("Duplicate product id: {}", productId);
+                                    return true;
+                                }
+                                return false;
+                            });
+
+                    if (isProductIdExisted) continue;
+
+                    String date = values[ColumnEnum.Column4.getCode()].trim();
                     Order order = Order.builder()
                             .id(id)
                             .customerId(customerId)
                             .productQuantities(productQuantityMap)
                             .orderDate(date)
                             .build();
+
                     if (validationManager.validate(OrderValidationDTO.builder()
                             .orderList(orders)
                             .order(order)
                             .customerList(customerRepository.getList())
                             .productList(productRepository.getList())
-                            .build()))
+                            .build())) {
                         orders.add(order);
+                    }
                 } else {
                     log.error("Invalid data format in line: {}", line);
                 }
             }
-
         } catch (IOException e) {
             log.error("Error while reading file: {}", filePath, e);
         }
@@ -102,38 +109,41 @@ public class OrderFileHandling implements SalesManager {
         }
     }
 
-
     @Override
     public <T> void writeFile(List<T> elements, String filePath) {
 
+        if (elements == null || elements.isEmpty() || !(elements.get(0) instanceof Order)) return;
 
-        if (elements != null && !elements.isEmpty() && elements.get(0) instanceof Order) {
-            List<Order> orders = (List<Order>) elements;
+        List<Order> orders = (List<Order>) elements;
 
-            try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), StandardCharsets.UTF_8))) {
+        StringBuilder content = new StringBuilder(ColumnNameEnum.OrderNameEnum.getColumnName()).append("\n");
 
-                bw.write(ColumnNameEnum.OrderNameEnum.getColumnName());
-                bw.newLine();
+        orders.forEach(order -> {
 
-                for (Order order : orders) {
-                    if (!validationManager.isElementInFile(order, filePath)) {
-                        StringBuilder result = new StringBuilder();
-                        for (Map.Entry<String, Integer> entry : order.getProductQuantities().entrySet()) {
-                            result.append(entry.getKey())
-                                    .append(":")
-                                    .append(entry.getValue())
-                                    .append(";");
-                        }
-                        if (!result.isEmpty()) result.deleteCharAt(result.length() - 1);
-                        String line = order.getId() + "," + order.getCustomerId() + "," + result + "," + order.getOrderDate() + "," + order.getTotalAmount();
 
-                        bw.write(line);
-                        bw.newLine();
-                    }
-                }
-            } catch (IOException e) {
-               log.error("Error while writing Order file: {}", filePath, e);
-            }
+            StringBuilder result = new StringBuilder();
+            order.getProductQuantities().forEach((productId, quantity) ->
+                    result.append(productId).append(":").append(quantity).append(";"));
+            if (result.length() > 0) result.setLength(result.length() - 1); // Remove last ";"
+
+            content.append(order.getId()).append(",")
+                    .append(order.getCustomerId()).append(",")
+                    .append(result).append(",")
+                    .append(order.getOrderDate()).append(",")
+                    .append(order.getTotalAmount()).append("\n");
+
+
+        });
+
+        try {
+            Files.writeString(Path.of(filePath),
+                    content.toString(),
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            log.error("Error while writing Order file: {}", filePath, e);
         }
     }
 }
+

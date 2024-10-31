@@ -1,18 +1,21 @@
 package org.example.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.model.Customer;
+import org.example.utils.EmailUtils;
+import org.example.utils.PhoneNumberUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+@Slf4j
 public class CustomerRepository {
     private static CustomerRepository instance = null;
     private final Map<String, Customer> list;
 
     private CustomerRepository() {
-        list = new HashMap<>();
+        list = new LinkedHashMap<>();
     }
 
     public static CustomerRepository getInstance() {
@@ -40,7 +43,21 @@ public class CustomerRepository {
     }
 
     public void addCustomer(Customer element) {
-        list.put(element.getPhoneNumber(), element);
+        List<String> emails, phoneNumbers;
+        List<Customer> customers = getList();
+        emails = customers.stream()
+                .map(Customer::getPhoneNumber)
+                .toList();
+        phoneNumbers = customers.stream()
+                .map(Customer::getEmail)
+                .toList();
+        if (PhoneNumberUtils.phoneExisted(phoneNumbers, element.getPhoneNumber())
+                && EmailUtils.emailExists(emails, element.getEmail())) {
+            list.put(element.getPhoneNumber(), element);
+        }
+        else
+            log.error("Customer {} has an existing phone number or email.", element.getId());
+
     }
 
     public boolean isCustomerIdExisted(String id) {
