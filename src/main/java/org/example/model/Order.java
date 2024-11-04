@@ -38,10 +38,10 @@ public class Order {
 
                     Product product = productRepository.findById(productId);
 
+
                     if (product != null) {
                         return product.getPrice() * quantity;
                     } else {
-
                         log.error("Product với id {} không tồn tại.", productId);
                         return 0.0;
                     }

@@ -2,18 +2,11 @@ package org.example.factory.validation.iml;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.DTO.OrderValidationDTO;
-import org.example.enums.ColumnEnum;
 import org.example.factory.validation.ValidationManager;
-import org.example.model.Order;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -22,12 +15,10 @@ public class OrderValidation implements ValidationManager<OrderValidationDTO> {
 
     @Override
     public boolean validate(OrderValidationDTO orderValidationDTO) {
-        List<Boolean> valids = new ArrayList<>();
-        valids.add(!isIdExisted(orderValidationDTO));
-        valids.add(isCustomerIdExisted(orderValidationDTO));
-        valids.add(isOrderDateFormated(orderValidationDTO));
-        valids.add(isProductQuantitiesValid(orderValidationDTO));
-        return valids.stream().noneMatch(valid -> valid.equals(false));
+        return !isIdExisted(orderValidationDTO) &&
+                isCustomerIdExisted(orderValidationDTO) &&
+                isOrderDateFormated(orderValidationDTO) &&
+                isProductQuantitiesValid(orderValidationDTO);
     }
 
 
@@ -37,7 +28,7 @@ public class OrderValidation implements ValidationManager<OrderValidationDTO> {
                 .anyMatch(order -> order.getId().equals(orderValidationDTO.getOrder().getId()));
 
         if (result) {
-            log.error("Order{} is existed!",orderValidationDTO.getOrder().getId());
+            log.error("Order{} is existed!", orderValidationDTO.getOrder().getId());
             return true;
         }
         return false;
@@ -47,7 +38,7 @@ public class OrderValidation implements ValidationManager<OrderValidationDTO> {
         boolean result = orderValidationDTO.getCustomerList().stream()
                 .anyMatch(customer -> customer.getId().equals(orderValidationDTO.getOrder().getCustomerId()));
         if (!result) {
-            log.error("Customer{} is not existed!",orderValidationDTO.getOrder().getCustomerId());
+            log.error("Customer{} is not existed!", orderValidationDTO.getOrder().getCustomerId());
             return false;
         }
         return true;
@@ -62,7 +53,7 @@ public class OrderValidation implements ValidationManager<OrderValidationDTO> {
                     .anyMatch(product -> product.getId().equals(key));
             if (!productIdExisted && productQuantities.get(key) != null && productQuantities.get(key) > 0) {
 
-                log.error("Product quantities are not valid!");
+                log.error("Product quantities are invalid for Order ID: {}", orderValidationDTO.getOrder().getId());
                 return false;
             }
         }
@@ -75,10 +66,9 @@ public class OrderValidation implements ValidationManager<OrderValidationDTO> {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX");
             OffsetDateTime.parse(orderValidationDTO.getOrder().getOrderDate(), formatter);
         } catch (DateTimeParseException e) {
-            log.error("Lỗi: Định dạng thời gian của OrderDate không hợp lệ.");
+            log.error("Invalid date format for OrderDate in Order ID: {}", orderValidationDTO.getOrder().getId());
             return false;
         }
-
         return true;
     }
 }

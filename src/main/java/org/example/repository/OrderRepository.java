@@ -12,7 +12,7 @@ public class OrderRepository {
     private final Map<String, Order> orders;
 
     private OrderRepository() {
-        orders = new LinkedHashMap<>();
+        orders = new TreeMap<>();
     }
 
     public static OrderRepository getInstance() {
@@ -52,15 +52,18 @@ public class OrderRepository {
         String lastId = orders.isEmpty() ? "ORD0000000" : orders.keySet().stream()
                 .max(String::compareTo).orElse("ORD0000000");
 
+
         int numberInId = Integer.parseInt(lastId.substring(3));
 
         if (this.isProductIdExisted(order.getProductQuantities().keySet())
                 && this.isCustomerIdExisted(order.getCustomerId())) {
-            String orderId = String.format("ORD%07d", numberInId + 1);
+            String orderId = String.format("ORD%07d",  numberInId + 1);
             order.setId(orderId);
             this.addElement(order);
+
         } else {
-            log.error("Validate productId and customerId failed!");
+            log.error("Validation failed: ProductId(s) {} or CustomerId {} not found.", order.getProductQuantities().keySet(), order.getCustomerId());
+
         }
     }
 

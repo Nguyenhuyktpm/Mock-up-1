@@ -5,17 +5,15 @@ import org.example.model.Customer;
 import org.example.utils.EmailUtils;
 import org.example.utils.PhoneNumberUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 @Slf4j
 public class CustomerRepository {
     private static CustomerRepository instance = null;
     private final Map<String, Customer> list;
 
     private CustomerRepository() {
-        list = new LinkedHashMap<>();
+        list = new TreeMap<>();
     }
 
     public static CustomerRepository getInstance() {

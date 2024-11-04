@@ -1,8 +1,5 @@
 package org.example.servicetest;
 
-import org.example.utils.CommonController;
-import org.example.utils.ReadFileToAddOrder;
-import org.example.utils.FileReadingUtils;
 import org.example.factory.filehandilng.imp.OrderFileHandling;
 import org.example.model.Order;
 import org.example.model.Product;
@@ -10,6 +7,9 @@ import org.example.repository.CustomerRepository;
 import org.example.repository.OrderRepository;
 import org.example.repository.ProductRepository;
 import org.example.service.OrderService;
+import org.example.utils.CommonController;
+import org.example.utils.FileReadingUtils;
+import org.example.utils.ReadFileToAddOrder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -62,6 +62,13 @@ public class OrderServiceTest {
             return null;
         }).when(mockOrderFileHandling).addToRepository(anyList());
 
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("P0001", "Máy ảnh", 10.0, 100));
+        products.add(new Product("P0002", "Máy ảnh", 10.0, 100));
+        when(mockProductRepository.getList()).thenReturn(products);
+        when(mockProductRepository.findById("P0001")).thenReturn(products.get(0));
+        when(mockProductRepository.findById("P0002")).thenReturn(products.get(1));
+
         Map<String, Integer> productQuantities = new HashMap<>();
         productQuantities.put("P0001", 2);
         productQuantities.put("P0002", 1);
@@ -69,14 +76,7 @@ public class OrderServiceTest {
         List<Order> mockOrders = new ArrayList<>();
         mockOrders.add(new Order("ORD0001", "CUS0001", productQuantities, "2024-05-13T10:17:08.055107+07:07"));
 
-        List<Product> products = new ArrayList<>();
-        products.add(new Product("P0001", "Máy ảnh", 10.0, 100));
-        products.add(new Product("P0002", "Máy ảnh", 10.0, 100));
-
-        when(mockProductRepository.getList()).thenReturn(products);
-
         when(mockOrderFileHandling.readFile(anyString())).thenReturn(mockOrders);
-
 
         List<Order> orders = orderService.readOrderFromFile("Data");
 
@@ -87,6 +87,13 @@ public class OrderServiceTest {
 
     @Test
     public void testAddOrderFromFile() throws FileNotFoundException, InterruptedException {
+        List<Product> products = new ArrayList<>();
+        products.add(new Product("P0001", "Máy ảnh", 10.0, 100));
+        products.add(new Product("P0002", "Máy ảnh", 10.0, 100));
+        when(mockProductRepository.getList()).thenReturn(products);
+        when(mockProductRepository.findById("P0001")).thenReturn(products.get(0));
+        when(mockProductRepository.findById("P0002")).thenReturn(products.get(1));
+
         List<Order> mockOrders = new ArrayList<>();
         Map<String, Integer> productQuantities = new HashMap<>();
         productQuantities.put("P0001", 2);

@@ -59,14 +59,17 @@ public class OrderFileHandling implements SalesManager {
                             .anyMatch(keyValue -> {
                                 String productId = keyValue[0].trim();
                                 int quantity;
+
+
                                 try {
                                     quantity = Integer.parseInt(keyValue[1].trim());
                                 } catch (NumberFormatException e) {
-                                    log.error("Invalid number format in quantity: {}", keyValue[1], e);
-                                    return false;
+                                    log.error("Order with id {}: Invalid number format in quantity for productId {}: {}"
+                                            ,id, productId, keyValue[1], e);
+                                    return true;
                                 }
                                 if (productQuantityMap.putIfAbsent(productId, quantity) != null) {
-                                    log.error("Duplicate product id: {}", productId);
+                                    log.error("Order with id {} :Duplicate product id: {}",id, productId);
                                     return true;
                                 }
                                 return false;
@@ -119,8 +122,6 @@ public class OrderFileHandling implements SalesManager {
         StringBuilder content = new StringBuilder(ColumnNameEnum.OrderNameEnum.getColumnName()).append("\n");
 
         orders.forEach(order -> {
-
-
             StringBuilder result = new StringBuilder();
             order.getProductQuantities().forEach((productId, quantity) ->
                     result.append(productId).append(":").append(quantity).append(";"));
@@ -131,8 +132,6 @@ public class OrderFileHandling implements SalesManager {
                     .append(result).append(",")
                     .append(order.getOrderDate()).append(",")
                     .append(order.getTotalAmount()).append("\n");
-
-
         });
 
         try {

@@ -2,18 +2,11 @@ package org.example.factory.validation.iml;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.DTO.CustomerValidateDTO;
-import org.example.enums.ColumnEnum;
 import org.example.factory.validation.ValidationManager;
 import org.example.model.Customer;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 import java.util.regex.Pattern;
 
 @Slf4j
-
 public class CustomerValidation implements ValidationManager<CustomerValidateDTO> {
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
             "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*\\.[a-zA-Z]{2,7}$"
@@ -79,7 +72,6 @@ public class CustomerValidation implements ValidationManager<CustomerValidateDTO
         return false;
     }
 
-
     @Override
     public boolean validate(CustomerValidateDTO customerValidateDTO) {
         return !isIdExist(customerValidateDTO) &&
@@ -89,6 +81,5 @@ public class CustomerValidation implements ValidationManager<CustomerValidateDTO
                 isPhoneFormat(customerValidateDTO.getCustomer()) &&
                 isEmailFormat(customerValidateDTO.getCustomer());
     }
-
 
 }

@@ -9,7 +9,7 @@ public class ProductRepository {
     private final Map<String, Product> productMap;
 
     private ProductRepository() {
-        productMap = new LinkedHashMap<>();
+        productMap = new TreeMap<>();
     }
 
     public static ProductRepository getInstance() {

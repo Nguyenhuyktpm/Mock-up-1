@@ -23,14 +23,6 @@ public class CustomerService {
     public SalesManager salesManager = SaleManagerFactory.getSalesManager(dataType);
     public ValidationManager validationManager = ValidationFactory.getValidationManager(dataType);
 
-    public static void main(String[] args) throws FileNotFoundException {
-        CustomerService customerService = new CustomerService();
-        customerService.readCustomerFromFile("Data");
-//        customerService.editCustomerFromFile("Data");
-//        customerService.deleteCustomerFromFile("Data");
-        customerService.addCustomerFromFile("Data");
-    }
-
     public List<Customer> readCustomerFromFile(String folderPath) {
         String filePathInput = folderPath + FilePathEnum.CustomerInputPath.getPath();
         String filePathOutput = folderPath + FilePathEnum.CustomerOutputPath.getPath();

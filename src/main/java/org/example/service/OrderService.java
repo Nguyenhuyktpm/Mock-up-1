@@ -48,6 +48,7 @@ public class OrderService {
         try {
             List<Order> orders = readFileToAddOrder.readFile(filePathInput);
             orders.forEach(order -> order.calculateTotalAmount(productRepository));
+            System.out.println(orders);
             orders.forEach(orderRepository::addOrders);
         } catch (Exception e) {
             log.error("File not found: " + filePathInput);

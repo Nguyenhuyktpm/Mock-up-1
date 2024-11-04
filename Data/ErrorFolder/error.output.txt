@@ -1,0 +1,48 @@
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0123
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0098
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0962
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0726
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0033
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0025
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0695
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0926
+2024-11-01 10:02:43 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0314
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0939
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0504
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0037
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0265
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0426
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0424
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0941
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0964
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0100
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0918
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0879
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0143
+2024-11-01 10:02:44 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0748
+2024-11-01 10:02:45 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0313
+2024-11-01 10:02:45 ERROR o.e.f.f.imp.OrderFileHandling - Duplicate product id: P0562
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000070 :Duplicate product id: P0123
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000222 :Duplicate product id: P0098
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000449 :Duplicate product id: P0962
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000455 :Duplicate product id: P0726
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000626 :Duplicate product id: P0033
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000730 :Duplicate product id: P0025
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000829 :Duplicate product id: P0695
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000880 :Duplicate product id: P0926
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0000986 :Duplicate product id: P0314
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0001511 :Duplicate product id: P0939
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0001677 :Duplicate product id: P0504
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0001915 :Duplicate product id: P0037
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0001941 :Duplicate product id: P0265
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0001949 :Duplicate product id: P0426
+2024-11-01 10:41:37 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0002012 :Duplicate product id: P0424
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0002130 :Duplicate product id: P0941
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0002205 :Duplicate product id: P0964
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0002320 :Duplicate product id: P0100
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0002340 :Duplicate product id: P0918
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0003539 :Duplicate product id: P0879
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0004116 :Duplicate product id: P0143
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0004185 :Duplicate product id: P0748
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0004268 :Duplicate product id: P0313
+2024-11-01 10:41:38 ERROR o.e.f.f.imp.OrderFileHandling - Order with id ORD0004673 :Duplicate product id: P0562

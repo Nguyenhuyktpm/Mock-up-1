@@ -13,15 +13,14 @@ import java.util.*;
 
 @Slf4j
 public class ReadFileToAddOrder {
-    public  List<Order> readFile(String filePath) throws FileNotFoundException {
+    public List<Order> readFile(String filePath) throws FileNotFoundException {
         List<Order> list = new ArrayList<>();
         Random random = new Random();
         OrderRepository orderRepository = OrderRepository.getInstance();
 
-
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-            String line = br.readLine();
             boolean isFirstLine = true;
+            String line;
             while ((line = br.readLine()) != null) {
                 if (isFirstLine) {
                     isFirstLine = false;
@@ -57,7 +56,7 @@ public class ReadFileToAddOrder {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        ;
+
         return list;
     }
 }

@@ -27,6 +27,11 @@ public class ProductService {
     DataType dataType = DataType.PRODUCT;
     public SalesManager salesManager = SaleManagerFactory.getSalesManager(dataType);
 
+    public static void main(String[] args) {
+        ProductService productService = new ProductService();
+        productService.readProductFromFile("Data");
+    }
+
     public List<Product> readProductFromFile(String folderPath) {
         String filePathInput = folderPath + FilePathEnum.ProductInputPath.getPath();
         String filePathOutput = folderPath + FilePathEnum.ProductOutputPath.getPath();
@@ -94,7 +99,7 @@ public class ProductService {
         List<Product> products = productRepository.getList().stream()
                 .filter(product -> productOrderCount.containsKey(product.getId()))
                 .sorted((p1, p2) -> productOrderCount.get(p2.getId()) - productOrderCount.get(p1.getId()))
-                .limit(3)
+                .limit(20)
                 .toList();
 
 
