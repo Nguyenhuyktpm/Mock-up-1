@@ -20,6 +20,7 @@ Input data format:
   ORD0000001,CUS0374,P0945:47;P0145:27;P0159:18,2024-05-13T10:17:08.055107+07:07
 
 Cấu trúc dự án:
+```
 src
 ├── main
 │   ├── java
@@ -34,6 +35,7 @@ src
 │   │       └── Main              # Lớp chính để chạy ứng dụng
 │   └── resources                 # Thư mục chứa các file tài nguyên (như file dữ liệu đầu vào, cấu hình)
 └── test                          # Thư mục chứa các lớp kiểm thử
+```
 Danh sách chức năng:
 - 1: Load data.
 - 2.1: Thêm mới product.
